@@ -1,0 +1,27 @@
+version: '3.4'
+
+services:
+  backend:
+    image: ${DOCKER_REGISTRY-}backend
+    build:
+      context: .
+      dockerfile: Backend\Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    image:  sqlite:3.24.0
+    build:
+        context: .
+    environment:
+      - MYQLite_Database=internshipManagmentDatabase.db
+    volumes:
+      - Backend\internshipManagmentDatabase.db
+  frontend:
+    build:
+      context: .
+    volumes:
+      - ../Frontend/src:/code/src
+      - /project/node_modules 
+    depends_on:
+      - backend 
